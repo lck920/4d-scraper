@@ -1,44 +1,41 @@
-# 4D Scraper
+# 4D Scraper (Standalone Version)
 
-## Note
-This is a standalone version derived from:
+This repository contains a standalone 4D scraper for Magnum and Toto results from 4dmoon.com.
 
-https://github.com/lck920/randai-scraper-bot
+> **Note:** This is a standalone scraper version derived from the [RandAI Scraper Bot](https://github.com/lck920/randai-scraper-bot) repository. The code in this repository was created and refactored using ChatGPT.
 
-Created using ChatGPT.
+## Overview
+This project contains Python scripts designed to extract 4D lottery results and save them locally. 
 
-This repository contains standalone Python scraping scripts to retrieve past 4D results from 4dmoon directly into local CSV files, without the Telegram bot interface.
+- `scrape_magnum.py` - Scrapes Magnum 4D results.
+- `scrape_toto.py` - Scrapes Toto 4D results.
 
----
+## Installation
 
-# Included Scripts
+1. **Clone or Download the Repository:**
+   Download the source code to your local machine.
 
-`scrape_magnum.py`
-Scrapes and updates the Magnum 4D dataset.
+2. **Install Python:**
+   Ensure you have Python 3.7 or newer installed. You can download it from [python.org](https://www.python.org/).
 
-`scrape_toto.py`
-Scrapes and updates the Sports Toto dataset.
+3. **Install Dependencies:**
+   Open a terminal or command prompt in the project directory and install the required third-party libraries:
+   ```bash
+   pip install requests beautifulsoup4
+   ```
 
----
+## Usage Guide
 
-# Features
+You can run the scrapers individually from the command line. When executed, the scripts will connect to the target website, parse the latest 4D results, and save the data locally in your directory.
 
-- Historical 4D scraping
-- Automatic CSV updating
-- Incremental updates
-- Parallel scraping
-- Local dataset generation
-- Standalone usage without Telegram bot
-
----
-
-# Requirements
-
-- Python 3.9+
-- requests
-- beautifulsoup4
-
-Install dependencies:
-
+**To scrape Magnum results:**
 ```bash
-pip install requests beautifulsoup4
+python scrape_magnum.py
+```
+
+**To scrape Toto results:**
+```bash
+python scrape_toto.py
+```
+
+*Note: Depending on how your Python environment is set up, you may need to use `python3` instead of `python`.*
