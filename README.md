@@ -13,10 +13,10 @@ This repository contains standalone Python scraping scripts to retrieve past 4D 
 
 # Included Scripts
 
-## `scrape_magnum.py`
+`scrape_magnum.py`
 Scrapes and updates the Magnum 4D dataset.
 
-## `scrape_toto.py`
+`scrape_toto.py`
 Scrapes and updates the Sports Toto dataset.
 
 ---
