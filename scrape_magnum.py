@@ -237,7 +237,62 @@ def parse_lottery_html(html: str, requested_date: date) -> dict | None:
     return row
 
 
+def scrape_live_json(dt: date) -> dict | None:
+    try:
+        r = requests.get("https://www.4dmoon.com/feedwest.json", headers=HEADERS, timeout=REQUEST_TIMEOUT)
+        if r.status_code != 200:
+            return None
+        data = r.json()
+        prov_data = data.get("M")
+        if not prov_data:
+            return None
+        
+        dd_str = prov_data.get("DD", "")
+        match = re.search(r"\d{1,2}-[A-Za-z]{3}-\d{4}", dd_str)
+        if not match:
+            return None
+        draw_date = datetime.strptime(match.group(0), "%d-%b-%Y").date()
+        if draw_date != dt:
+            return None
+            
+        row = empty_row(format_csv_date(draw_date))
+        dn = prov_data.get("DN", "")
+        m = re.search(r"#\s*([A-Za-z0-9/\-]+)", dn)
+        row["drawno"] = m.group(1).strip() if m else dn.strip()
+        
+        row["winning1"] = prov_data.get("P1", "")
+        row["winning2"] = prov_data.get("P2", "")
+        row["winning3"] = prov_data.get("P3", "")
+        
+        specials = []
+        for i in range(1, 15):
+            val = prov_data.get(f"S{i}", "")
+            if is_4d_number(val):
+                specials.append(val)
+        for i, value in enumerate((specials + [""] * 10)[:10], 1):
+            row[f"special{i}"] = value
+            
+        cons = []
+        for i in range(1, 15):
+            val = prov_data.get(f"C{i}", "")
+            if is_4d_number(val):
+                cons.append(val)
+        for i, value in enumerate((cons + [""] * 10)[:10], 1):
+            row[f"consolation{i}"] = value
+            
+        if is_suspicious_row(row):
+            return None
+        return row
+    except Exception:
+        return None
+
+
 def scrape_one_day(dt: date) -> dict | None:
+    if dt == date.today():
+        live_row = scrape_live_json(dt)
+        if live_row:
+            return live_row
+
     html = get_html(BASE_URL.format(dt.strftime("%Y-%m-%d")))
     if not html:
         return None
@@ -319,13 +374,13 @@ def main():
                 else:
                     print(f"  [{idx}/{total}] SKIP {dt} (no draw / no valid {TARGET_NAME} data)")
             except Exception as e:
-                print(f"  [{idx}/{total}] ERROR {dt} → {e}")
+                print(f"  [{idx}/{total}] ERROR {dt} -> {e}")
 
     all_rows = merge_rows(existing_rows, new_rows)
     latest = latest_draw_date(all_rows) or today
     out = output_filename(latest)
     save_csv(all_rows, out)
-    print(f"\nSaved {len(all_rows)} total rows ({len(new_rows)} scraped/updated) → {os.path.basename(out)}")
+    print(f"\nSaved {len(all_rows)} total rows ({len(new_rows)} scraped/updated) -> {os.path.basename(out)}")
 
     for old in glob.glob(os.path.join(SCRIPT_DIR, f"{FILE_PREFIX}_*.csv")):
         if os.path.abspath(old) != os.path.abspath(out):

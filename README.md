@@ -10,6 +10,11 @@ This project contains Python scripts designed to extract 4D lottery results and 
 - `scrape_magnum.py` - Scrapes Magnum 4D results.
 - `scrape_toto.py` - Scrapes Toto 4D results.
 
+## Features
+- **Historical Data Scraping**: Pulls all past results up to the current date and automatically repairs suspicious or corrupted data blocks.
+- **Live Draw Support**: Intelligently switches to the live JSON data feed for today's date so you can scrape results even while the draw is happening.
+- **Automated CSV Management**: Automatically names the output files based on the latest valid draw date and removes older output files to keep your directory clean.
+
 ## Installation
 
 1. **Clone or Download the Repository:**
