@@ -106,7 +106,6 @@ def is_suspicious_row(row: dict) -> bool:
     # or the 1st prize is duplicated into the 2nd prize.
     return (
         (w1 == "0002" and w2 == "0003") or
-        (w1 and w1 == w2) or
         (w1 in {"0002", "0003", "0004"}) or
         (w2 in {"0002", "0003", "0004"}) or
         not (is_4d_number(w1) and is_4d_number(w2) and is_4d_number(w3))
