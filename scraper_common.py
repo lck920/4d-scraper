@@ -359,6 +359,29 @@ def latest_draw_date(rows: list[dict]) -> date | None:
     return max(dates) if dates else None
 
 
+def print_row_result(cfg: LotteryConfig, row: dict | None, target_date: date):
+    print(f"{cfg.target_name} Results - {format_csv_date(target_date)}")
+    if not row:
+        print("No draw result found for this date.\n")
+        return
+
+    print(f"1st prize: {row['winning1']}")
+    print(f"2nd prize: {row['winning2']}")
+    print(f"3rd prize: {row['winning3']}")
+
+    special = [row[f"special{i}"] for i in range(1, 11) if row[f"special{i}"]]
+    consolation = [row[f"consolation{i}"] for i in range(1, 11) if row[f"consolation{i}"]]
+
+    print(f"Special: {', '.join(special)}")
+    print(f"Consolation: {', '.join(consolation)}")
+    print()
+
+
+def print_result_for_date(cfg: LotteryConfig, rows: list[dict], target_date: date):
+    row = next((r for r in rows if row_date(r) == target_date), None)
+    print_row_result(cfg, row, target_date)
+
+
 def save_csv(rows: list[dict], output_path: str):
     rows = sorted(rows, key=lambda r: row_date(r) or date.min)
     with open(output_path, "w", newline="", encoding="utf-8-sig") as f:
@@ -471,3 +494,6 @@ def run_scraper(target_name: str, file_prefix: str, logo_src_keys: list[str], li
                 print(f"Deleted old file: {os.path.basename(old)}")
             except OSError as e:
                 print(f"Could not delete {old}: {e}")
+
+    print()
+    print_result_for_date(cfg, all_rows, latest)
